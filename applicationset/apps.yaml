@@ -1,0 +1,30 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: demo-appset
+  namespace: argocd
+
+spec:
+  generators:
+  - git:
+      repoURL: https://github.com/Santhosh-git26/my-agrocd.git
+      revision: good
+      directories:
+      - path: "*"
+
+  template:
+    metadata:
+      name: '{{path.basename}}-app'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/Santhosh-git26/my-agrocd.git
+        targetRevision: good
+        path: '{{path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: default
+      syncPolicy:
+        automated:
+          selfHeal: true
+          prune: true
